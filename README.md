@@ -21,5 +21,5 @@ AM Play is a modern web-based music player built with **Vue 3**, **Tailwind CSS*
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/username/AM-Play.git
-   cd AM-Play
+   git clone https://github.com/mdalmamunDev/AM-Play-Web.git
+   cd AM-Play-Web
