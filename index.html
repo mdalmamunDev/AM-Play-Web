@@ -3,74 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Play</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Music Player</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Vue 3 CDN -->
+  <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    /* Progress Bar Styling */
+    input[type="range"] {
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: #444;
+      outline: none;
+      border-radius: 5px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #a855f7;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
 
-  <div id="app" class="min-h-screen flex items-center justify-center p-6">
-    <!-- Music Player -->
-    <div class="w-full max-w-lg bg-gray-800 rounded-lg shadow-2xl p-6">
-      <!-- Album Artwork -->
-      <div class="flex justify-center mb-6">
-        <div class="w-48 h-48 bg-gray-600 rounded-lg flex items-center justify-center">
-          <span class="text-4xl text-gray-300">🎵</span>
-        </div>
-      </div>
+  <!-- Blurred Background -->
+  <div 
+    class="absolute inset-0 bg-cover bg-center blur-lg" 
+    style="background-image: url('https://via.placeholder.com/800x600');">
+  </div>
+  <div class="absolute inset-0 bg-black bg-opacity-50"></div>
 
-      <!-- Song Info -->
-      <div class="text-center mb-4">
-        <h2 class="text-2xl font-bold">{{ currentSong.title }}</h2>
-        <p class="text-sm text-gray-400">{{ currentSong.artist }}</p>
-      </div>
+  <!-- Vue App -->
+  <div id="app" class="relative z-10 w-full max-w-md px-4">
+    <!-- Album Art -->
+    <div class="flex justify-center">
+      <img 
+        :src="currentSong.cover" 
+        alt="Album Cover" 
+        class="w-72 h-72 rounded-lg shadow-lg object-cover"
+      />
+    </div>
 
-      <!-- Progress Bar -->
-      <div class="relative w-full mb-4">
-        <input
-          type="range"
-          min="0"
-          :max="duration"
-          v-model="currentTime"
-          @input="seekSong"
-          class="w-full appearance-none h-2 bg-blue-500 rounded cursor-pointer"
-        />
-        <div class="flex justify-between text-xs mt-1 text-gray-400">
-          <span>{{ formatTime(currentTime) }}</span>
-          <span>{{ formatTime(duration) }}</span>
-        </div>
-      </div>
+    <!-- Song Details -->
+    <div class="text-center mt-6">
+      <h1 class="text-3xl font-bold">{{ currentSong.title }}</h1>
+      <p class="text-gray-400 text-sm mt-2">{{ currentSong.artist }}</p>
+    </div>
 
-      <!-- Controls -->
-      <div class="flex items-center justify-center gap-6 mb-4">
-        <button @click="prevSong" class="text-3xl hover:text-blue-400">⏮️</button>
-        <button
-          @click="togglePlay"
-          class="bg-blue-500 text-white w-16 h-16 rounded-full shadow-md hover:bg-blue-600 flex items-center justify-center"
-        >
-          <span class="text-3xl">{{ isPlaying ? "⏸️" : "▶️" }}</span>
-        </button>
-        <button @click="nextSong" class="text-3xl hover:text-blue-400">⏭️</button>
+    <!-- Progress Bar -->
+    <div class="mt-6">
+      <input 
+        type="range" 
+        min="0" 
+        :max="duration" 
+        v-model="currentTime" 
+        @input="seekSong"
+      />
+      <div class="flex justify-between text-xs text-gray-400 mt-1">
+        <span>{{ formatTime(currentTime) }}</span>
+        <span>{{ formatTime(duration) }}</span>
       </div>
+    </div>
 
-      <!-- Volume Control -->
-      <div class="flex items-center gap-4">
-        <span class="text-sm">🔊</span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          v-model="volume"
-          @input="setVolume"
-          class="w-full appearance-none h-1 bg-gray-400 rounded cursor-pointer"
-        />
-      </div>
+    <!-- Music Controls -->
+    <div class="flex items-center justify-center gap-8 mt-6">
+      <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
+        🔁
+      </button>
+      <button @click="prevSong" class="text-3xl hover:text-purple-400">
+        ⏮️
+      </button>
+      <button 
+        @click="togglePlay"
+        class="bg-purple-500 text-white w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg">
+        <span class="text-3xl">{{ isPlaying ? '⏸️' : '▶️' }}</span>
+      </button>
+      <button @click="nextSong" class="text-3xl hover:text-purple-400">
+        ⏭️
+      </button>
+      <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
+        🔀
+      </button>
     </div>
   </div>
 
+  <!-- Vue Script -->
   <script>
     const { createApp, ref, reactive } = Vue;
 
@@ -78,46 +99,45 @@
       setup() {
         const audioPlayer = ref(new Audio());
         const isPlaying = ref(false);
-        const currentSongIndex = ref(0);
+        const isRepeat = ref(false);
+        const isShuffle = ref(false);
         const currentTime = ref(0);
         const duration = ref(0);
-        const volume = ref(0.5); // Default volume
+        const currentSongIndex = ref(0);
 
-        // Music Playlist
+        // Playlist
         const playlist = reactive([
           {
-            title: "Song 1",
-            artist: "Artist 1",
-            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            title: "Junooniyat",
+            artist: "Akriti Kakar, Shrey Singhal",
+            cover: "https://via.placeholder.com/400x400",
+            src: "https://drive.google.com/uc?export=download&id=18rcIeuttHKjRF1MKOg3hfJ0mDGj3fcx1", // Google Drive Direct Link
           },
           {
             title: "Song 2",
             artist: "Artist 2",
+            cover: "https://via.placeholder.com/400x400",
             src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
           },
           {
             title: "Song 3",
             artist: "Artist 3",
+            cover: "https://via.placeholder.com/400x400",
             src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
           },
         ]);
 
         const currentSong = ref(playlist[currentSongIndex.value]);
 
-        // Initialize Audio Player
         const loadSong = () => {
           audioPlayer.value.src = currentSong.value.src;
           audioPlayer.value.load();
-          audioPlayer.value.volume = volume.value;
-
           audioPlayer.value.addEventListener("loadedmetadata", () => {
             duration.value = audioPlayer.value.duration;
           });
-
           audioPlayer.value.addEventListener("timeupdate", () => {
             currentTime.value = audioPlayer.value.currentTime;
           });
-
           audioPlayer.value.addEventListener("ended", () => {
             nextSong();
           });
@@ -133,8 +153,9 @@
         };
 
         const nextSong = () => {
-          currentSongIndex.value =
-            (currentSongIndex.value + 1) % playlist.length;
+          currentSongIndex.value = isShuffle.value
+            ? Math.floor(Math.random() * playlist.length)
+            : (currentSongIndex.value + 1) % playlist.length;
           updateSong();
         };
 
@@ -155,8 +176,13 @@
           audioPlayer.value.currentTime = currentTime.value;
         };
 
-        const setVolume = () => {
-          audioPlayer.value.volume = volume.value;
+        const toggleRepeat = () => {
+          isRepeat.value = !isRepeat.value;
+          audioPlayer.value.loop = isRepeat.value;
+        };
+
+        const toggleShuffle = () => {
+          isShuffle.value = !isShuffle.value;
         };
 
         const formatTime = (time) => {
@@ -168,18 +194,19 @@
         loadSong();
 
         return {
-          audioPlayer,
           playlist,
           currentSong,
           isPlaying,
           currentTime,
           duration,
-          volume,
+          isRepeat,
+          isShuffle,
           togglePlay,
           nextSong,
           prevSong,
           seekSong,
-          setVolume,
+          toggleRepeat,
+          toggleShuffle,
           formatTime,
         };
       },
