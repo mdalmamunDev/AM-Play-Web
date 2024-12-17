@@ -71,146 +71,151 @@
 
     <!-- Music Controls -->
     <div class="flex items-center justify-center gap-8 mt-6">
-      <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
+        <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
         🔁
-      </button>
-      <button @click="prevSong" class="text-3xl hover:text-purple-400">
+        </button>
+        <button @click="prevSong" class="text-3xl hover:text-purple-400">
         ⏮️
-      </button>
-      <button 
+        </button>
+        <button
         @click="togglePlay"
-        class="bg-purple-500 text-white w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg">
+        class="bg-purple-500 text-white w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg"
+        >
         <span class="text-3xl">{{ isPlaying ? '⏸️' : '▶️' }}</span>
-      </button>
-      <button @click="nextSong" class="text-3xl hover:text-purple-400">
+        </button>
+        <button @click="nextSong" class="text-3xl hover:text-purple-400">
         ⏭️
-      </button>
-      <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
+        </button>
+        <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
         🔀
-      </button>
-    </div>
+        </button>
+  </div>
+  
   </div>
 
   <!-- Vue Script -->
   <script>
     const { createApp, ref, reactive } = Vue;
 
-    createApp({
-      setup() {
-        const audioPlayer = ref(new Audio());
-        const isPlaying = ref(false);
-        const isRepeat = ref(false);
-        const isShuffle = ref(false);
-        const currentTime = ref(0);
-        const duration = ref(0);
-        const currentSongIndex = ref(0);
+        createApp({
+            setup() {
+                const audioPlayer = ref(new Audio());
+                const isPlaying = ref(false);
+                const isRepeat = ref(false);
+                const isShuffle = ref(false);
+                const currentTime = ref(0);
+                const duration = ref(0);
+                const currentSongIndex = ref(0);
 
-        // Playlist
-        const playlist = reactive([
-          {
-            title: "Junooniyat",
-            artist: "Akriti Kakar, Shrey Singhal",
-            cover: "https://via.placeholder.com/400x400",
-            src: "https://drive.google.com/uc?export=download&id=18rcIeuttHKjRF1MKOg3hfJ0mDGj3fcx1", // Google Drive Direct Link
-          },
-          {
-            title: "Song 2",
-            artist: "Artist 2",
-            cover: "https://via.placeholder.com/400x400",
-            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-          },
-          {
-            title: "Song 3",
-            artist: "Artist 3",
-            cover: "https://via.placeholder.com/400x400",
-            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-          },
-        ]);
+                // Playlist
+                const playlist = reactive([
+                {
+                    title: "Junooniyat",
+                    artist: "Akriti Kakar, Shrey Singhal",
+                    cover: "https://via.placeholder.com/400x400",
+                    src: "https://pagalnew.com/128-download/3964", // Google Drive Direct Link
+                },
+                {
+                    title: "Song 2",
+                    artist: "Artist 2",
+                    cover: "https://via.placeholder.com/400x400",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                },
+                {
+                    title: "Song 3",
+                    artist: "Artist 3",
+                    cover: "https://via.placeholder.com/400x400",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+                },
+                ]);
 
-        const currentSong = ref(playlist[currentSongIndex.value]);
+                const currentSong = ref(playlist[currentSongIndex.value]);
 
-        const loadSong = () => {
-          audioPlayer.value.src = currentSong.value.src;
-          audioPlayer.value.load();
-          audioPlayer.value.addEventListener("loadedmetadata", () => {
-            duration.value = audioPlayer.value.duration;
-          });
-          audioPlayer.value.addEventListener("timeupdate", () => {
-            currentTime.value = audioPlayer.value.currentTime;
-          });
-          audioPlayer.value.addEventListener("ended", () => {
-            nextSong();
-          });
-        };
+                const loadSong = () => {
+                audioPlayer.value.src = currentSong.value.src;
+                audioPlayer.value.load();
+                audioPlayer.value.addEventListener("loadedmetadata", () => {
+                    duration.value = audioPlayer.value.duration;
+                });
+                audioPlayer.value.addEventListener("timeupdate", () => {
+                    currentTime.value = audioPlayer.value.currentTime;
+                });
+                audioPlayer.value.addEventListener("ended", () => {
+                    nextSong();
+                });
+                };
 
-        const togglePlay = () => {
-          if (isPlaying.value) {
-            audioPlayer.value.pause();
-          } else {
-            audioPlayer.value.play();
-          }
-          isPlaying.value = !isPlaying.value;
-        };
+                const togglePlay = () => {
+                if (isPlaying.value) {
+                    audioPlayer.value.pause();
+                } else {
+                    audioPlayer.value.play().catch((error) => {
+                    // Autoplay failed due to restrictions, just log it
+                    console.log("Autoplay failed", error);
+                    });
+                }
+                isPlaying.value = !isPlaying.value;
+                };
 
-        const nextSong = () => {
-          currentSongIndex.value = isShuffle.value
-            ? Math.floor(Math.random() * playlist.length)
-            : (currentSongIndex.value + 1) % playlist.length;
-          updateSong();
-        };
+                const nextSong = () => {
+                currentSongIndex.value = isShuffle.value
+                    ? Math.floor(Math.random() * playlist.length)
+                    : (currentSongIndex.value + 1) % playlist.length;
+                updateSong();
+                };
 
-        const prevSong = () => {
-          currentSongIndex.value =
-            (currentSongIndex.value - 1 + playlist.length) % playlist.length;
-          updateSong();
-        };
+                const prevSong = () => {
+                currentSongIndex.value =
+                    (currentSongIndex.value - 1 + playlist.length) % playlist.length;
+                updateSong();
+                };
 
-        const updateSong = () => {
-          currentSong.value = playlist[currentSongIndex.value];
-          isPlaying.value = false;
-          loadSong();
-          togglePlay();
-        };
+                const updateSong = () => {
+                currentSong.value = playlist[currentSongIndex.value];
+                isPlaying.value = false;
+                loadSong();
+                };
 
-        const seekSong = () => {
-          audioPlayer.value.currentTime = currentTime.value;
-        };
+                const seekSong = () => {
+                audioPlayer.value.currentTime = currentTime.value;
+                };
 
-        const toggleRepeat = () => {
-          isRepeat.value = !isRepeat.value;
-          audioPlayer.value.loop = isRepeat.value;
-        };
+                const toggleRepeat = () => {
+                isRepeat.value = !isRepeat.value;
+                audioPlayer.value.loop = isRepeat.value;
+                };
 
-        const toggleShuffle = () => {
-          isShuffle.value = !isShuffle.value;
-        };
+                const toggleShuffle = () => {
+                isShuffle.value = !isShuffle.value;
+                };
 
-        const formatTime = (time) => {
-          const minutes = Math.floor(time / 60);
-          const seconds = Math.floor(time % 60);
-          return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-        };
+                const formatTime = (time) => {
+                const minutes = Math.floor(time / 60);
+                const seconds = Math.floor(time % 60);
+                return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+                };
 
-        loadSong();
+                // Initially load the first song
+                loadSong();
 
-        return {
-          playlist,
-          currentSong,
-          isPlaying,
-          currentTime,
-          duration,
-          isRepeat,
-          isShuffle,
-          togglePlay,
-          nextSong,
-          prevSong,
-          seekSong,
-          toggleRepeat,
-          toggleShuffle,
-          formatTime,
-        };
-      },
-    }).mount("#app");
-  </script>
+                return {
+                playlist,
+                currentSong,
+                isPlaying,
+                currentTime,
+                duration,
+                isRepeat,
+                isShuffle,
+                togglePlay,
+                nextSong,
+                prevSong,
+                seekSong,
+                toggleRepeat,
+                toggleShuffle,
+                formatTime,
+                };
+            },
+            }).mount("#app");
+    </script>
 </body>
 </html>
