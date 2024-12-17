@@ -28,17 +28,17 @@
     }
   </style>
 </head>
-<body class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
+<body id="app" class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
 
   <!-- Blurred Background -->
   <div 
     class="absolute inset-0 bg-cover bg-center blur-lg" 
-    style="background-image: url('https://via.placeholder.com/800x600');">
+    :style="`background-image: url('${currentSong.cover}');`">
   </div>
   <div class="absolute inset-0 bg-black bg-opacity-50"></div>
 
   <!-- Vue App -->
-  <div id="app" class="relative z-10 w-full max-w-md px-4">
+  <div class="relative z-10 w-full max-w-md px-4">
     <!-- Album Art -->
     <div class="flex justify-center">
       <img 
@@ -112,7 +112,7 @@
                 {
                     title: "Junooniyat",
                     artist: "Akriti Kakar, Shrey Singhal",
-                    cover: "https://via.placeholder.com/400x400",
+                    cover: "https://pagalnew.com/coverimages/Junooniyat-Meet-Bros-500-500.jpg",
                     src: "https://pagalnew.com/128-download/3964", // Google Drive Direct Link
                 },
                 {
