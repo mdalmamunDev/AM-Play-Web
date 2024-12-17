@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AM Play</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+  <div id="app" class="min-h-screen flex items-center justify-center p-6">
+    <!-- Music Player -->
+    <div class="w-full max-w-lg bg-gray-800 rounded-lg shadow-2xl p-6">
+      <!-- Album Artwork -->
+      <div class="flex justify-center mb-6">
+        <div class="w-48 h-48 bg-gray-600 rounded-lg flex items-center justify-center">
+          <span class="text-4xl text-gray-300">🎵</span>
+        </div>
+      </div>
+
+      <!-- Song Info -->
+      <div class="text-center mb-4">
+        <h2 class="text-2xl font-bold">{{ currentSong.title }}</h2>
+        <p class="text-sm text-gray-400">{{ currentSong.artist }}</p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="relative w-full mb-4">
+        <input
+          type="range"
+          min="0"
+          :max="duration"
+          v-model="currentTime"
+          @input="seekSong"
+          class="w-full appearance-none h-2 bg-blue-500 rounded cursor-pointer"
+        />
+        <div class="flex justify-between text-xs mt-1 text-gray-400">
+          <span>{{ formatTime(currentTime) }}</span>
+          <span>{{ formatTime(duration) }}</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center justify-center gap-6 mb-4">
+        <button @click="prevSong" class="text-3xl hover:text-blue-400">⏮️</button>
+        <button
+          @click="togglePlay"
+          class="bg-blue-500 text-white w-16 h-16 rounded-full shadow-md hover:bg-blue-600 flex items-center justify-center"
+        >
+          <span class="text-3xl">{{ isPlaying ? "⏸️" : "▶️" }}</span>
+        </button>
+        <button @click="nextSong" class="text-3xl hover:text-blue-400">⏭️</button>
+      </div>
+
+      <!-- Volume Control -->
+      <div class="flex items-center gap-4">
+        <span class="text-sm">🔊</span>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          v-model="volume"
+          @input="setVolume"
+          class="w-full appearance-none h-1 bg-gray-400 rounded cursor-pointer"
+        />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    createApp({
+      setup() {
+        const audioPlayer = ref(new Audio());
+        const isPlaying = ref(false);
+        const currentSongIndex = ref(0);
+        const currentTime = ref(0);
+        const duration = ref(0);
+        const volume = ref(0.5); // Default volume
+
+        // Music Playlist
+        const playlist = reactive([
+          {
+            title: "Song 1",
+            artist: "Artist 1",
+            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+          },
+          {
+            title: "Song 2",
+            artist: "Artist 2",
+            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+          },
+          {
+            title: "Song 3",
+            artist: "Artist 3",
+            src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+          },
+        ]);
+
+        const currentSong = ref(playlist[currentSongIndex.value]);
+
+        // Initialize Audio Player
+        const loadSong = () => {
+          audioPlayer.value.src = currentSong.value.src;
+          audioPlayer.value.load();
+          audioPlayer.value.volume = volume.value;
+
+          audioPlayer.value.addEventListener("loadedmetadata", () => {
+            duration.value = audioPlayer.value.duration;
+          });
+
+          audioPlayer.value.addEventListener("timeupdate", () => {
+            currentTime.value = audioPlayer.value.currentTime;
+          });
+
+          audioPlayer.value.addEventListener("ended", () => {
+            nextSong();
+          });
+        };
+
+        const togglePlay = () => {
+          if (isPlaying.value) {
+            audioPlayer.value.pause();
+          } else {
+            audioPlayer.value.play();
+          }
+          isPlaying.value = !isPlaying.value;
+        };
+
+        const nextSong = () => {
+          currentSongIndex.value =
+            (currentSongIndex.value + 1) % playlist.length;
+          updateSong();
+        };
+
+        const prevSong = () => {
+          currentSongIndex.value =
+            (currentSongIndex.value - 1 + playlist.length) % playlist.length;
+          updateSong();
+        };
+
+        const updateSong = () => {
+          currentSong.value = playlist[currentSongIndex.value];
+          isPlaying.value = false;
+          loadSong();
+          togglePlay();
+        };
+
+        const seekSong = () => {
+          audioPlayer.value.currentTime = currentTime.value;
+        };
+
+        const setVolume = () => {
+          audioPlayer.value.volume = volume.value;
+        };
+
+        const formatTime = (time) => {
+          const minutes = Math.floor(time / 60);
+          const seconds = Math.floor(time % 60);
+          return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        };
+
+        loadSong();
+
+        return {
+          audioPlayer,
+          playlist,
+          currentSong,
+          isPlaying,
+          currentTime,
+          duration,
+          volume,
+          togglePlay,
+          nextSong,
+          prevSong,
+          seekSong,
+          setVolume,
+          formatTime,
+        };
+      },
+    }).mount("#app");
+  </script>
+</body>
+</html>
