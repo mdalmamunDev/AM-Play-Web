@@ -1,0 +1,31 @@
+:root {
+    --def-col: #a855f7;
+}
+/* Progress Bar Styling */
+input[type="range"] {
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #444;
+    outline: none;
+    border-radius: 5px;
+}
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--def-col);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+@media (min-width: 640px) {
+    .mobile-frame {
+        background-image: url("../images/mobile-frame.png");
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100%;
+    }
+}

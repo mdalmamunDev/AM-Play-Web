@@ -4,59 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AM Play</title>
+    <link rel="icon" type="image/x-icon" href="images/img_def_album_art.png">
+    <link rel="stylesheet" href="css/styles.css" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- Fontawesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <style>
-        :root {
-            --def-col: #a855f7;
-        }
-        /* Progress Bar Styling */
-        input[type="range"] {
-            appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #444;
-            outline: none;
-            border-radius: 5px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            background: var(--def-col);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        @media (min-width: 640px) {
-            .mobile-frame {
-                background-image: url("images/mobile-frame.png");
-                background-size: 100% 100%;
-                background-position: center;
-                background-repeat: no-repeat;
-                width: 100%;
-                height: 100%;
-            }
-        }
-    </style>
 </head>
-<body class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
 
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
 <!-- Vue App -->
 <div id="app">
     <!-- Blurred Background -->
-    <div class="absolute inset-0 bg-cover bg-center blur-lg" :style="`background-image: url('${currentSong.cover}');`"></div>
+    <div class="absolute inset-0 bg-cover bg-center blur-lg" :style="`background-image: url('${currentSong.cover || 'images/img_def_album_art.png'}');`"></div>
     <div class="absolute inset-0 bg-black bg-opacity-50"></div>
 
     <div class="relative z-10 w-full max-w-md sm:px-4 mobile-frame">
         <!-- Album Art -->
         <div class="sm:px-1 sm:py-10">
             <div class="flex justify-center">
-                <img :src="currentSong.cover" alt="Album Cover" class="w-72 h-72 sm:p-2 rounded-lg shadow-lg object-cover"/>
+                <img :src="currentSong.cover || 'images/img_def_album_art.png'" alt="Album Cover" class="w-72 h-72 sm:p-2 rounded-lg shadow-lg object-cover"/>
             </div>
 
             <!-- Song Details -->
@@ -118,20 +87,38 @@
                     {
                         title: "Junooniyat",
                         artist: "Akriti Kakar, Shrey Singhal",
-                        cover: "https://pagalnew.com/coverimages/Junooniyat-Meet-Bros-500-500.jpg",
-                        src: "https://pagalnew.com/128-download/3964",
+                        cover: "covers/Junooniyat Meet Bros.jpg",
+                        src: "audio/Junooniyat Meet Bros 128 Kbps.mp3",
                     },
                     {
-                        title: "Song 2",
-                        artist: "Artist 2",
-                        cover: "https://via.placeholder.com/400x400",
-                        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                        title: "Thehre Rahen",
+                        artist: "Jubin Nautiyal",
+                        cover: "covers/Thehre Rahen - Jubin Nautiyal.jpg",
+                        src: "audio/Thehre Rahen - Jubin Nautiyal.mp3",
                     },
                     {
-                        title: "Song 3",
-                        artist: "Artist 3",
-                        cover: "https://via.placeholder.com/400x400",
-                        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+                        title: "Tera Kasoor",
+                        artist: "Vishal Mishra, Payal Dev, Kunaal Vermaa",
+                        cover: "covers/Tera Kasoor - Vishal Mishra.jpg",
+                        src: "audio/Tera Kasoor - Vishal Mishra.mp3",
+                    },
+                    {
+                        title: "Morni",
+                        artist: "Badshah, Sharvi Yadav, Hiten",
+                        cover: "covers/Morni - Badshah.jpg",
+                        src: "audio/Morni - Badshah.mp3",
+                    },
+                    {
+                        title: "Junooniyat",
+                        artist: "Akriti Kakar, Shrey Singhal",
+                        cover: "",
+                        src: "audio/Junooniyat Meet Bros 128 Kbps.mp3",
+                    },
+                    {
+                        title: "AANKH",
+                        artist: "Sunidhi Chauhan",
+                        cover: "covers/AANKH - Sunidhi Chauhan.jpg",
+                        src: "audio/AANKH - Sunidhi Chauhan.mp3",
                     },
                 ],
             };
