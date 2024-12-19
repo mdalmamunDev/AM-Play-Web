@@ -11,6 +11,9 @@
     <!-- Fontawesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        :root {
+            --def-col: #a855f7;
+        }
         /* Progress Bar Styling */
         input[type="range"] {
             appearance: none;
@@ -24,7 +27,7 @@
             appearance: none;
             width: 14px;
             height: 14px;
-            background: #a855f7;
+            background: var(--def-col);
             border-radius: 50%;
             cursor: pointer;
         }
@@ -56,7 +59,7 @@
 
         <!-- Progress Bar -->
         <div class="mt-6">
-            <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong"/>
+            <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong" :style="{ background: progressBarBackground }"/>
             <div class="flex justify-between text-xs text-gray-400 mt-1">
                 <span>{{ formatTime(currentTime) }}</span>
                 <span>{{ formatTime(duration) }}</span>
@@ -87,6 +90,9 @@
 
 <!-- Vue Script -->
 <script>
+    const __def_col = '#a855f7';
+
+
     const { createApp } = Vue;
 
     createApp({
@@ -125,6 +131,11 @@
         computed: {
             currentSong() {
                 return this.playlist[this.currentSongIndex];
+            },
+
+            progressBarBackground() {
+                const progress = (this.currentTime / this.duration) * 100;
+                return `linear-gradient(to right, ${__def_col} ${progress}%, #444 ${progress}%)`;
             },
         },
 
