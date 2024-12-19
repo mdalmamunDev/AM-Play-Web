@@ -27,7 +27,7 @@
                 <div class="sm:px-1 sm:py-10">
                     <div class="text-center text-xs text-gray-400">{{ currentSongIndex+1 }}/{{ playlist.length }}</div>
                     <div class="flex justify-center">
-                        <img :src="currentSong.cover || 'images/img_def_album_art.png'" alt="Album Cover" class="w-80 h- sm:p-2 rounded-lg shadow-lg object-cover"/>
+                        <img :src="currentSong.cover || 'images/img_def_album_art.png'" alt="Album Cover" class="w-80 h-80 mx-10 sm:mx-0 sm:p-2 rounded-lg shadow-lg object-cover"/>
                     </div>
 
                     <!-- Song Details -->
@@ -53,7 +53,7 @@
                     </div>
 
                     <!-- Music Controls -->
-                    <div class="flex items-center justify-center gap-8 mt-6">
+                    <div class="flex items-center justify-center gap-8 mt-6 mb-10 sm:mb-0">
                         <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
                             <i class="fas fa-repeat"></i>
                         </button>
