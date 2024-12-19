@@ -36,8 +36,15 @@
                         <p class="text-gray-400 text-sm mt-2">{{ currentSong.artist }}</p>
                     </div>
 
+                    <div class="mt-6 flex w-full justify-between">
+                        <i class="fa-regular fa-heart"></i>
+                        <i class="fa-solid fa-music"></i>
+                        <i class="fa-regular fa-square-plus"></i>
+                        <i @click="toggleModal" class="fas fa-list sm:hidden"></i>
+                    </div>
+
                     <!-- Progress Bar -->
-                    <div class="mt-6">
+                    <div class="">
                         <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong" :style="{ background: progressBarBackground }"/>
                         <div class="flex justify-between text-xs text-gray-400 mt-1">
                             <span>{{ formatTime(currentTime) }}</span>
@@ -67,12 +74,13 @@
                 </div>
             </div>
         </div>
-        <!--  Playlist -->
-        <div class="relative z-10 max-w-md">
-            <div class="w-full h-full sm:ml-10 border rounded-lg shadow-md overflow-hidden hidden sm:block">
+
+        <!-- Playlist (visible on larger screens, modal on small screens) -->
+        <div class="relative z-10 max-w-md sm:block hidden">
+            <div class="w-full h-full sm:ml-10 border rounded-lg shadow-md overflow-hidden">
                 <h2 class="text-2xl font-bold text-center py-4">Playlist</h2>
                 <ul class="divide-y divide-gray-700">
-                    <li  v-for="(song, index) in playlist" :key="index" @click="playSong(index)" class="flex items-center gap-4 p-4 hover:bg-purple-600 cursor-pointer" :class="{'bg-purple-700': currentSongIndex === index}">
+                    <li v-for="(song, index) in playlist" :key="index" @click="playSong(index)" class="flex items-center gap-4 p-4 hover:bg-purple-600 cursor-pointer" :class="{'bg-purple-700': currentSongIndex === index}">
                         <img :src="song.cover || 'images/img_def_album_art.png'" alt="Song Cover" class="w-12 h-12 rounded-lg object-cover" />
                         <div class="flex-1">
                             <h3 class="text-lg font-semibold">{{ song.title }}</h3>
@@ -85,12 +93,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Playlist for Small Screens -->
+    <div v-if="isModalOpen" class="sm:hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+        <div class="bg-gray-800 text-white rounded-lg p-6 w-full max-h-full overflow-y-auto">
+            <h2 class="text-2xl font-bold text-center py-4">Playlist</h2>
+            <ul class="divide-y divide-gray-700">
+                <li v-for="(song, index) in playlist" :key="index" @click="playSong(index)" class="flex items-center gap-4 p-4 hover:bg-purple-600 cursor-pointer" :class="{'bg-purple-700': currentSongIndex === index}">
+                    <img :src="song.cover || 'images/img_def_album_art.png'" alt="Song Cover" class="w-12 h-12 rounded-lg object-cover" />
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold">{{ song.title }}</h3>
+                        <p class="text-sm text-gray-400">{{ song.artist }}</p>
+                    </div>
+                    <i class="fas fa-play text-gray-400" v-if="currentSongIndex !== index"></i>
+                    <i class="fas fa-pause text-gray-400" v-else-if="isPlaying"></i>
+                </li>
+            </ul>
+            <button @click="toggleModal" class="absolute top-2 right-2 text-white text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- Vue Script -->
 <script>
     const __def_col = '#a855f7';
-
 
     const { createApp } = Vue;
 
@@ -104,6 +132,7 @@
                 currentTime: 0,
                 duration: 0,
                 currentSongIndex: 0,
+                isModalOpen: false,  // New state for controlling modal visibility
                 playlist: [
                     {
                         title: "Junooniyat",
@@ -228,6 +257,10 @@
                 const minutes = Math.floor(time / 60);
                 const seconds = Math.floor(time % 60);
                 return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+            },
+
+            toggleModal() {
+                this.isModalOpen = !this.isModalOpen; // Toggle the modal visibility
             },
         },
 
