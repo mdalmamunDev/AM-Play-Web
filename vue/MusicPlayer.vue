@@ -1,93 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AM Play</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Vue 3 -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Fontawesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <style>
-        /* Progress Bar Styling */
-        input[type="range"] {
-            appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #444;
-            outline: none;
-            border-radius: 5px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #a855f7;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body id="app" class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
+<!-- src/components/MusicPlayer.vue -->
+<template>
+    <div class="relative z-10 w-full max-w-md px-4">
+        <!-- Album Art -->
+        <div class="flex justify-center">
+            <img
+                    :src="currentSong.cover"
+                    alt="Album Cover"
+                    class="w-72 h-72 rounded-lg shadow-lg object-cover"
+            />
+        </div>
 
-<!-- Blurred Background -->
-<div class="absolute inset-0 bg-cover bg-center blur-lg" :style="`background-image: url('${currentSong.cover}');`"></div>
-<div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <!-- Song Details -->
+        <div class="text-center mt-6">
+            <h1 class="text-3xl font-bold">{{ currentSong.title }}</h1>
+            <p class="text-gray-400 text-sm mt-2">{{ currentSong.artist }}</p>
+        </div>
 
-<!-- Vue App -->
-<div class="relative z-10 w-full max-w-md px-4">
-    <!-- Album Art -->
-    <div class="flex justify-center">
-        <img
-                :src="currentSong.cover"
-                alt="Album Cover"
-                class="w-72 h-72 rounded-lg shadow-lg object-cover"
-        />
-    </div>
+        <!-- Progress Bar -->
+        <div class="mt-6">
+            <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong"/>
+            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                <span>{{ formatTime(currentTime) }}</span>
+                <span>{{ formatTime(duration) }}</span>
+            </div>
+        </div>
 
-    <!-- Song Details -->
-    <div class="text-center mt-6">
-        <h1 class="text-3xl font-bold">{{ currentSong.title }}</h1>
-        <p class="text-gray-400 text-sm mt-2">{{ currentSong.artist }}</p>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="mt-6">
-        <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong"/>
-        <div class="flex justify-between text-xs text-gray-400 mt-1">
-            <span>{{ formatTime(currentTime) }}</span>
-            <span>{{ formatTime(duration) }}</span>
+        <!-- Music Controls -->
+        <div class="flex items-center justify-center gap-8 mt-6">
+            <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
+                <i class="fas fa-repeat"></i>
+            </button>
+            <button @click="prevSong" class="text-3xl hover:text-purple-400">
+                <i class="fa-solid fa-backward"></i>
+            </button>
+            <button @click="togglePlay" class="bg-purple-500 text-white text-3xl w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg">
+                <i v-if="isPlaying" class="fas fa-pause"></i>
+                <i v-else class="fas fa-play"></i>
+            </button>
+            <button @click="nextSong" class="text-3xl hover:text-purple-400">
+                <i class="fa-solid fa-forward"></i>
+            </button>
+            <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
+                <i class="fas fa-random"></i>
+            </button>
         </div>
     </div>
+</template>
 
-    <!-- Music Controls -->
-    <div class="flex items-center justify-center gap-8 mt-6">
-        <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
-            <i class="fas fa-repeat"></i>
-        </button>
-        <button @click="prevSong" class="text-3xl hover:text-purple-400">
-            <i class="fa-solid fa-backward"></i>
-        </button>
-        <button @click="togglePlay" class="bg-purple-500 text-white text-3xl w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg">
-            <i v-if="isPlaying" class="fas fa-pause"></i>
-            <i v-else class="fas fa-play"></i>
-        </button>
-        <button @click="nextSong" class="text-3xl hover:text-purple-400">
-            <i class="fa-solid fa-forward"></i>
-        </button>
-        <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
-            <i class="fas fa-random"></i>
-        </button>
-    </div>
-</div>
-
-<!-- Vue Script -->
 <script>
-    const { createApp } = Vue;
-
-    createApp({
+    export default {
+        name: "MusicPlayer",
         data() {
             return {
                 audioPlayer: new Audio(),
@@ -148,20 +110,12 @@
                     ? Math.floor(Math.random() * this.playlist.length)
                     : (this.currentSongIndex + 1) % this.playlist.length;
                 this.updateSong();
-                this.audioPlayer.play().catch((error) => {
-                    console.log("Autoplay failed", error);
-                });
-                this.isPlaying = true;
             },
 
             prevSong() {
                 this.currentSongIndex =
                     (this.currentSongIndex - 1 + this.playlist.length) % this.playlist.length;
                 this.updateSong();
-                this.audioPlayer.play().catch((error) => {
-                    console.log("Autoplay failed", error);
-                });
-                this.isPlaying = true;
             },
 
             updateSong() {
@@ -212,7 +166,9 @@
                 this.nextSong();
             });
         },
-    }).mount("#app");
+    };
 </script>
-</body>
-</html>
+
+<style scoped>
+    /* Add your component-specific styles here */
+</style>
