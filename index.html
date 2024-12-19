@@ -86,8 +86,8 @@
                             <h3 class="text-lg font-semibold">{{ song.title }}</h3>
                             <p class="text-sm text-gray-400">{{ song.artist }}</p>
                         </div>
-                        <i class="fas fa-play text-gray-400" v-if="currentSongIndex !== index"></i>
-                        <i class="fas fa-pause text-gray-400" v-else-if="isPlaying"></i>
+                        <i v-if="isPlaying && currentSongIndex === index" class="fas fa-pause text-gray-400"></i>
+                        <i v-else class="fas fa-play text-gray-400"></i>
                     </li>
                 </ul>
             </div>
@@ -105,8 +105,8 @@
                         <h3 class="text-lg font-semibold">{{ song.title }}</h3>
                         <p class="text-sm text-gray-400">{{ song.artist }}</p>
                     </div>
-                    <i class="fas fa-play text-gray-400" v-if="currentSongIndex !== index"></i>
-                    <i class="fas fa-pause text-gray-400" v-else-if="isPlaying"></i>
+                    <i v-if="isPlaying && currentSongIndex === index" class="fas fa-pause text-gray-400"></i>
+                    <i v-else class="fas fa-play text-gray-400"></i>
                 </li>
             </ul>
             <button @click="toggleModal" class="absolute top-2 right-2 text-white text-2xl">
