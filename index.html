@@ -30,56 +30,58 @@
         }
     </style>
 </head>
-<body id="app" class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center relative">
 
-<!-- Blurred Background -->
-<div class="absolute inset-0 bg-cover bg-center blur-lg" :style="`background-image: url('${currentSong.cover}');`"></div>
-<div class="absolute inset-0 bg-black bg-opacity-50"></div>
+<div id="app">
+    <!-- Blurred Background -->
+    <div class="absolute inset-0 bg-cover bg-center blur-lg" :style="`background-image: url('${currentSong.cover}');`"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
 
-<!-- Vue App -->
-<div class="relative z-10 w-full max-w-md px-4">
-    <!-- Album Art -->
-    <div class="flex justify-center">
-        <img
-                :src="currentSong.cover"
-                alt="Album Cover"
-                class="w-72 h-72 rounded-lg shadow-lg object-cover"
-        />
-    </div>
-
-    <!-- Song Details -->
-    <div class="text-center mt-6">
-        <h1 class="text-3xl font-bold">{{ currentSong.title }}</h1>
-        <p class="text-gray-400 text-sm mt-2">{{ currentSong.artist }}</p>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="mt-6">
-        <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong"/>
-        <div class="flex justify-between text-xs text-gray-400 mt-1">
-            <span>{{ formatTime(currentTime) }}</span>
-            <span>{{ formatTime(duration) }}</span>
+    <!-- Vue App -->
+    <div class="relative z-10 w-full max-w-md px-4">
+        <!-- Album Art -->
+        <div class="flex justify-center">
+            <img
+                    :src="currentSong.cover"
+                    alt="Album Cover"
+                    class="w-72 h-72 rounded-lg shadow-lg object-cover"
+            />
         </div>
-    </div>
 
-    <!-- Music Controls -->
-    <div class="flex items-center justify-center gap-8 mt-6">
-        <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
-            <i class="fas fa-repeat"></i>
-        </button>
-        <button @click="prevSong" class="text-3xl hover:text-purple-400">
-            <i class="fa-solid fa-backward"></i>
-        </button>
-        <button @click="togglePlay" class="bg-purple-500 text-white text-3xl w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg">
-            <i v-if="isPlaying" class="fas fa-pause"></i>
-            <i v-else class="fas fa-play"></i>
-        </button>
-        <button @click="nextSong" class="text-3xl hover:text-purple-400">
-            <i class="fa-solid fa-forward"></i>
-        </button>
-        <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
-            <i class="fas fa-random"></i>
-        </button>
+        <!-- Song Details -->
+        <div class="text-center mt-6">
+            <h1 class="text-3xl font-bold">{{ currentSong.title }}</h1>
+            <p class="text-gray-400 text-sm mt-2">{{ currentSong.artist }}</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mt-6">
+            <input type="range" min="0" :max="duration" v-model="currentTime" @input="seekSong"/>
+            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                <span>{{ formatTime(currentTime) }}</span>
+                <span>{{ formatTime(duration) }}</span>
+            </div>
+        </div>
+
+        <!-- Music Controls -->
+        <div class="flex items-center justify-center gap-8 mt-6">
+            <button @click="toggleRepeat" :class="{'text-purple-400': isRepeat}">
+                <i class="fas fa-repeat"></i>
+            </button>
+            <button @click="prevSong" class="text-3xl hover:text-purple-400">
+                <i class="fa-solid fa-backward"></i>
+            </button>
+            <button @click="togglePlay" class="bg-purple-500 text-white text-3xl w-16 h-16 rounded-full flex items-center justify-center hover:bg-purple-600 shadow-lg">
+                <i v-if="isPlaying" class="fas fa-pause"></i>
+                <i v-else class="fas fa-play"></i>
+            </button>
+            <button @click="nextSong" class="text-3xl hover:text-purple-400">
+                <i class="fa-solid fa-forward"></i>
+            </button>
+            <button @click="toggleShuffle" :class="{'text-purple-400': isShuffle}">
+                <i class="fas fa-random"></i>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -214,5 +216,6 @@
         },
     }).mount("#app");
 </script>
+
 </body>
 </html>
