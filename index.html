@@ -165,6 +165,17 @@ createApp({
             audioPlayer.load();
         };
 
+        const playSong = (index) => {
+            if (currentSongIndex.value !== index) {
+                currentSongIndex.value = index;
+                loadSong();
+                audioPlayer.play();
+                isPlaying.value = true;
+            } else {
+                togglePlay();
+            }
+        };
+
         const togglePlay = () => {
             if (isPlaying.value) {
                 audioPlayer.pause();
@@ -242,6 +253,7 @@ createApp({
             currentSong,
             progressBarBackground,
             loadSong,
+            playSong,
             togglePlay,
             nextSong,
             prevSong,
