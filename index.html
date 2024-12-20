@@ -198,8 +198,9 @@ createApp({
         };
 
         const updateSong = () => {
-            isPlaying.value = false;
+            isPlaying.value = true;
             loadSong();
+            audioPlayer.play();
         };
 
         const seekSong = () => {
